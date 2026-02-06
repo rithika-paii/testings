@@ -1,78 +1,63 @@
-# Task 1 — Bank Account Management System (Build Challenge)
+# Bank Account Management System – Build Challenge (Assignment 1)
 
-A Python-based bank account management system that supports multiple account types, transaction processing (deposit/withdraw/transfer), full transaction history logging (including failures), monthly interest processing for savings, and monthly statements.
+## Overview
 
-This repo includes:
-- Clean object-oriented design (`Account`, `Transaction`, `Bank`)
-- Rule-based transaction validation
-- Full transaction audit trail (SUCCESS/FAILED with reason)
-- Unit tests covering core methods and rules
-- A demo script that creates 4 accounts and runs 20+ transactions (including failed attempts)
+This project implements a **bank account management system** in Python that supports multiple account types, transaction processing, complete transaction history tracking, and monthly statement generation.
+
+The system follows clean object-oriented design principles and includes comprehensive unit tests to validate business rules, transaction validation, and state management.
 
 ---
 
-## Features Implemented
+## Features
 
-### Account Types
+- Supports **CHECKING** and **SAVINGS** account types
+- Handles **DEPOSIT**, **WITHDRAWAL**, and **TRANSFER** transactions
+- Records full transaction history (including failed transactions)
+- Enforces account-specific rules (fees, minimum balance, withdrawal limits)
+- Applies monthly interest for savings accounts
+- Generates formatted monthly account statements
+- Includes a demo that exercises all required scenarios
 
-#### CHECKING
+---
+
+## Account Rules
+
+### CHECKING Account
 - No minimum balance
-- **10 free successful transactions per month**
-- After 10 free transactions: **$2.50 fee per successful transaction**
+- First **10 successful transactions per month are free**
+- After 10 transactions, a **$2.50 fee** is applied per successful transaction
+- Fee applies to **all transaction types**:
+  - Deposit
+  - Withdrawal
+  - Transfer
 
-#### SAVINGS
-- **Minimum balance: $100** (cannot fall below this after withdrawal/transfer-out)
-- **Max 5 withdrawals per month**
-  - Withdrawals include:
-    - `WITHDRAWAL`
-    - `TRANSFER` out (from savings)
-- **Earns 2% monthly interest** (applied via `applyMonthlyInterest()`)
+### SAVINGS Account
+- Minimum balance: **$100**
+- Maximum **5 withdrawals per month**
+- Earns **2% monthly interest**
+- Transfers count as withdrawals
+- **Unlimited deposits** are allowed
 
 ---
 
-## Transaction Types
-- `DEPOSIT`
-- `WITHDRAWAL`
-- `TRANSFER`
+## Transaction Recording
 
-Every transaction is recorded with:
+Every transaction (successful or failed) is recorded with:
 - `transactionId`
 - `timestamp`
-- `type`
+- `type` (DEPOSIT / WITHDRAWAL / TRANSFER)
 - `amount`
 - `balanceBefore`
 - `balanceAfter`
-- `status` (`SUCCESS` / `FAILED`)
-- `reason` (present for failures and fee/interest notes)
+- `status` (SUCCESS / FAILED)
+- `reason` (for failures, fees, or interest)
 
-**Failed transactions are still recorded** and do not change account balances.
-
----
-
-## Project Structure
-
-task_1/
-├── README.md
-├── requirements.txt
-├── .gitignore
-├── src/
-│ └── bank_system/
-│ ├── init.py
-│ ├── models.py # Account, Transaction, enums
-│ ├── bank.py # Bank class + business rules
-│ └── demo.py # Demo: 4 accounts + 20+ txns (incl failures)
-└── tests/
-├── init.py
-├── test_open_close.py
-├── test_checking_rules.py
-├── test_savings_rules.py
-├── test_transfer.py
-└── test_history.py
-
+Failed transactions do **not** modify account balances but are always recorded for auditability.
 
 ---
 
 ## Prerequisites
+
 - **Python 3.10+** (recommended)
 - pip
 
@@ -80,21 +65,84 @@ To confirm:
 ```bash
 python --version
 pip --version
+```
 
-## Setup Instructions 
-Create and activate a virtual environment
+## Setup & Installation
+
+Create and activate a virtual environment (Unix/macOS):
+
+```bash
 python -m venv .venv
 source .venv/bin/activate
+```
 
-## Install dependencies
+Create and activate a virtual environment (Windows PowerShell):
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+Install dependencies:
+
+```bash
 pip install -r requirements.txt
+```
 
-## to run the unit tests
+## Run Unit Tests
+
+From the `task_1` directory (Unix/macOS):
+
+```bash
 PYTHONPATH=src pytest -q
+```
 
-## to run the demo
+From the `task_1` directory (Windows PowerShell):
+
+```powershell
+$env:PYTHONPATH = 'src'
+pytest -q
+```
+
+All tests should pass successfully.
+
+## Run Demo
+
+From the project root (Unix/macOS):
+
+```bash
 PYTHONPATH=src python -m bank_system.demo
+```
+
+From the project root (Windows PowerShell):
+
+```powershell
+$env:PYTHONPATH = 'src'
+python -m bank_system.demo
+```
+
+The `demo.py` module exercises account operations and prints sample output to the console.
 
 ## Assumptions
+
 - The initial deposit recorded during `openAccount()` counts as a successful monthly transaction and increments `monthlyTransactionCount`.
-- For CHECKING accounts, the $2.50 fee applies after 10 free successful transactions per month and applies to **all** transaction types (DEPOSIT, WITHDRAWAL, TRANSFER), not only deposits.
+- For `CHECKING` accounts, the $2.50 transaction fee applies after 10 free successful transactions per month.
+- The transaction fee applies to all transaction types (`DEPOSIT`, `WITHDRAWAL`, `TRANSFER`), not only deposits.
+- `SAVINGS` accounts are assumed to allow unlimited deposits; limits specified in the assignment apply only to withdrawals.
+- Failed transactions are always recorded but do not modify account balances.
+- Monthly transaction counters reset as part of monthly processing (assumed per assignment scope).
+
+## Sample Input and Output
+
+The demo file (`demo.py`) serves as the sample input and output for this assignment. The demo demonstrates:
+
+- Opening multiple accounts
+- Deposits, withdrawals, and transfers
+- Transaction fees for `CHECKING` accounts
+- Withdrawal limits for `SAVINGS` accounts
+- Failed transactions due to rule violations
+- Monthly statements with full transaction history and ending balances
+
+The console output produced by `demo.py` represents the expected sample output.
+
+---
