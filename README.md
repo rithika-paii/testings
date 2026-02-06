@@ -1,148 +1,98 @@
-# Bank Account Management System – Build Challenge (Assignment 1)
+# Task 2 - Student Gradebook and GPA's (Build challenge)
 
 ## Overview
+This project implements a student gradebook system in Python that tracks assignments across weighted grading categories, computes category averages, calculates final course grades (percentage + letter grade), computes GPA weighted by credit hours, and generates a formatted transcript.
 
-This project implements a **bank account management system** in Python that supports multiple account types, transaction processing, complete transaction history tracking, and monthly statement generation.
-
-The system follows clean object-oriented design principles and includes comprehensive unit tests to validate business rules, transaction validation, and state management.
-
----
-
-## Features
-
-- Supports **CHECKING** and **SAVINGS** account types
-- Handles **DEPOSIT**, **WITHDRAWAL**, and **TRANSFER** transactions
-- Records full transaction history (including failed transactions)
-- Enforces account-specific rules (fees, minimum balance, withdrawal limits)
-- Applies monthly interest for savings accounts
-- Generates formatted monthly account statements
-- Includes a demo that exercises all required scenarios
+Includes:
+- Object-oriented design (`Assignment`, `Course`, `Student`, `GradeBook`)
+- Category-weighted grading with validation
+- Edge case handling (missing scores, empty categories)
+- Unit tests for core behavior
+- Demo with 3 students enrolled in 2–3 courses each
 
 ---
 
-## Account Rules
+## Grading Rules
 
-### CHECKING Account
-- No minimum balance
-- First **10 successful transactions per month are free**
-- After 10 transactions, a **$2.50 fee** is applied per successful transaction
-- Fee applies to **all transaction types**:
-  - Deposit
-  - Withdrawal
-  - Transfer
+### Categories & Weights (must total 100%)
+- HOMEWORK: 20%
+- QUIZZES: 20%
+- MIDTERM: 25%
+- FINAL_EXAM: 35%
 
-### SAVINGS Account
-- Minimum balance: **$100**
-- Maximum **5 withdrawals per month**
-- Earns **2% monthly interest**
-- Transfers count as withdrawals
-- **Unlimited deposits** are allowed
+### Category Average
+Category score = average across all assignments in that category:
+- computed as `(totalPointsEarned / totalPointsPossible) * 100`
 
----
+### Final Course Grade
+Final grade = weighted sum of category averages.
 
-## Transaction Recording
+**Edge case:** categories with **no assignments are excluded** from the calculation and the remaining weights are re-normalized.
 
-Every transaction (successful or failed) is recorded with:
-- `transactionId`
-- `timestamp`
-- `type` (DEPOSIT / WITHDRAWAL / TRANSFER)
-- `amount`
-- `balanceBefore`
-- `balanceAfter`
-- `status` (SUCCESS / FAILED)
-- `reason` (for failures, fees, or interest)
+### Letter Grades
+- A: 90–100
+- B: 80–89
+- C: 70–79
+- D: 60–69
+- F: <60
 
-Failed transactions do **not** modify account balances but are always recorded for auditability.
+### GPA Points
+- A=4.0, B=3.0, C=2.0, D=1.0, F=0.0
+
+GPA is weighted by credit hours.
 
 ---
 
 ## Prerequisites
-
-- **Python 3.10+** (recommended)
+- Python 3.10+ recommended
 - pip
 
-To confirm:
-```bash
-python --version
-pip --version
-```
+---
 
-## Setup & Installation
+## Setup Instructions
 
-Create and activate a virtual environment (Unix/macOS):
+### Create and Activate a Virtual Environment
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 ```
 
-Create and activate a virtual environment (Windows PowerShell):
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-```
-
-Install dependencies:
+### Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
+---
+
 ## Run Unit Tests
 
-From the `task_1` directory (Unix/macOS):
+From the `task_2` directory, run:
 
 ```bash
 PYTHONPATH=src pytest -q
 ```
 
-From the `task_1` directory (Windows PowerShell):
-
-```powershell
-$env:PYTHONPATH = 'src'
-pytest -q
-```
-
-All tests should pass successfully.
+---
 
 ## Run Demo
 
-From the project root (Unix/macOS):
-
 ```bash
-PYTHONPATH=src python -m bank_system.demo
+PYTHONPATH=src python -m gradebook.demo
 ```
 
-From the project root (Windows PowerShell):
+The demo includes three students, each enrolled in two to three courses, with varying assignments to demonstrate grading logic and edge cases.
 
-```powershell
-$env:PYTHONPATH = 'src'
-python -m bank_system.demo
-```
-
-The `demo.py` module exercises account operations and prints sample output to the console.
+---
 
 ## Assumptions
 
-- The initial deposit recorded during `openAccount()` counts as a successful monthly transaction and increments `monthlyTransactionCount`.
-- For `CHECKING` accounts, the $2.50 transaction fee applies after 10 free successful transactions per month.
-- The transaction fee applies to all transaction types (`DEPOSIT`, `WITHDRAWAL`, `TRANSFER`), not only deposits.
-- `SAVINGS` accounts are assumed to allow unlimited deposits; limits specified in the assignment apply only to withdrawals.
-- Failed transactions are always recorded but do not modify account balances.
-- Monthly transaction counters reset as part of monthly processing (assumed per assignment scope).
+- **Missing Assignment Scores:** Missing assignment scores (`pointsEarned=None`) are treated as zero earned points.
 
-## Sample Input and Output
+- **Empty Categories:** Categories with no assignments are excluded from final grade calculation and remaining weights are re-normalized.
 
-The demo file (`demo.py`) serves as the sample input and output for this assignment. The demo demonstrates:
+- **No Assignments in Any Category:** If a course has no assignments in any category, the final course grade is 0.00% (F).
 
-- Opening multiple accounts
-- Deposits, withdrawals, and transfers
-- Transaction fees for `CHECKING` accounts
-- Withdrawal limits for `SAVINGS` accounts
-- Failed transactions due to rule violations
-- Monthly statements with full transaction history and ending balances
+- **GPA Calculation:** GPA is calculated using credit-hour weighted averaging.
 
-The console output produced by `demo.py` represents the expected sample output.
-
----
